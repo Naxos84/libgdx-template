@@ -1,0 +1,36 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile project",
+            "command": "javac",
+            "windows": {
+                "args": [
+                    "-g",
+                    "-d",
+                    "build\\classes",
+                    "-classpath",
+                    "build\\classes",
+                    "-source",
+                    "1.8",
+                    "src/com/example/athena/destop/DesktopLauncher.java",
+                    "-verbose"
+                ]
+            },
+            "problemMatcher": {
+                "owner": "build",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):\\s+(警告|错误):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
+        }
+    ]
+}

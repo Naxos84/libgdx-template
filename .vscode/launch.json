@@ -1,0 +1,51 @@
+{
+    // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+    // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+    // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - DesktopLauncher",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/assets",
+            "stopOnEntry": false,
+            "mainClass": "com.example.athena.desktop.DesktopLauncher",
+            "args": "",
+            "projectName": "PlainAthena"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopOnEntry": false,
+            "mainClass": "com.example.Main",
+            "args": "",
+            "preLaunchTask": "Compile project"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<VSCode>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopOnEntry": false,
+            "mainClass": "com.example.Main",
+            "args": "",
+            "preLaunchTask": "Compile project",
+            "projectName": "VSCode"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Player",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopOnEntry": false,
+            "mainClass": "com.example.Main",
+            "args": ""
+        }
+    ]
+}
