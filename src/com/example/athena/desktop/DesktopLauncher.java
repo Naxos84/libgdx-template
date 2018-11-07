@@ -10,9 +10,9 @@ public class DesktopLauncher {
         //Erstellen einer Konfiguration
         final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-        //Setzen der Breite für die Konfiguration
+        //Setzen der Breite fÃ¼r die Konfiguration
         config.width = 800;
-        //Setzen der Höhe für die Konfiguration
+        //Setzen der HÃ¶he fÃ¼r die Konfiguration
         config.height = 600;
 
         //Erstellen einer Applikation mit unserem Spiel und der erstellten Konfiguration

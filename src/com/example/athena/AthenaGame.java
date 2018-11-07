@@ -13,11 +13,13 @@ public class AthenaGame extends Game {
     private OrthographicCamera camera;
     //Batch zum rendern von Texturen etc.
     private SpriteBatch batch;
-    //Texture (Bild) die gerendert werden soll
+    //Textur (Bild) die gerendert werden soll
     private Texture tex;
 
     @Override
     public void create() {
+        //Diese Methode wird !!!ein einziges!!! mal zu Beginn des Spiels aufgerufen
+
         //Erstellen der Kamera
         camera = new OrthographicCamera();
         //Setzen des Anzeigebereichs der Kamera
@@ -30,6 +32,7 @@ public class AthenaGame extends Game {
 
     @Override
     public void render() {
+        //Diese Methode wird immer wieder aufgerufen, solange das Spiel läuft
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -44,9 +47,9 @@ public class AthenaGame extends Game {
     @Override
     public void dispose() {
         //Wenn das Programm beendet wird, wird diese Methode aufgerufen
-        //Hier m�ssen einige Sachen wieder freigegeben werden, damit die nach Beenden des Spiels nicht mehr im Speicher bleiben!
+        //Hier müssen einige Sachen wieder freigegeben werden, damit die nach Beenden des Spiels nicht mehr im Speicher bleiben!
 
-        //Speicher von der Texture wieder freigeben!
+        //Speicher von der Textur wieder freigeben!
         tex.dispose();
         //Speicher vom Batch wieder freigeben!
         batch.dispose();
