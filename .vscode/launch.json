@@ -21,7 +21,7 @@
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "stopOnEntry": false,
-            "mainClass": "com.example.Main",
+            "mainClass": "com.example.athena.desktop.DesktopLauncher",
             "args": "",
             "preLaunchTask": "Compile project"
         },
@@ -32,20 +32,10 @@
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "stopOnEntry": false,
-            "mainClass": "com.example.Main",
+            "mainClass": "com.example.athena.desktop.DesktopLauncher",
             "args": "",
             "preLaunchTask": "Compile project",
             "projectName": "VSCode"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Player",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
-            "stopOnEntry": false,
-            "mainClass": "com.example.Main",
-            "args": ""
         }
     ]
 }
