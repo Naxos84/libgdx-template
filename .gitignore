@@ -91,6 +91,14 @@ bin/
 nbactions.xml
 nb-configuration.xml
 
+## VS-Code
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 ## Gradle
 
 /local.properties
