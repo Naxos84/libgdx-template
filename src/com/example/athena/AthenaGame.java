@@ -89,6 +89,7 @@ public class AthenaGame extends Game {
         //BONUS
         //#####
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            //Zurücksetzen aller Werte auf StandardWerte
             initializeValues();
         }
 
