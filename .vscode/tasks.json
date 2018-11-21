@@ -13,7 +13,7 @@
                     "build\\classes",
                     "-source",
                     "1.8",
-                    "src/com/example/athena/destop/DesktopLauncher.java",
+                    "src/com/example/athena/desktop/DesktopLauncher.java",
                     "-verbose"
                 ]
             },
