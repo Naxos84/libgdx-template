@@ -8,7 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.input.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class AthenaGame extends Game {
 
@@ -18,8 +21,12 @@ public class AthenaGame extends Game {
     private SpriteBatch batch;
     //TextureRegion (Bild) die gerendert werden soll
     private TextureRegion textureRegion;
-    int posx;
-    int posy;
+
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
+
+    int posX;
+    int posY;
     int width;
     int height;
     int rotation;
@@ -30,20 +37,31 @@ public class AthenaGame extends Game {
 
         //Erstellen der Kamera
         camera = new OrthographicCamera();
+
         //Setzen des Anzeigebereichs der Kamera
-        camera.setToOrtho(false, 800, 600);
+        camera.setToOrtho(false, 320, 240);
+
         //Erstellen des Batches
         batch = new SpriteBatch();
+
+        // Projektionsmatrix wird gesetzt
+        batch.setProjectionMatrix(camera.combined);
+
         //Erstellen der TextureRegion(Bild) mit "characters.png"
-        textureRegion = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")));
+        textureRegion = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 0, 0, 16, 16);
+
+        // Load map
+        tiledMap = new TmxMapLoader().load("maps/start.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
         //Alle Werte einmal festlegen, damit das Bild gemalt werden kann
         initializeValues();
     }
 
     //Kann aufgerufen werden um fest definierte Werte zu nutzen
     private void initializeValues() {
-        posx = 0;
-        posy = 0;
+        posX = 0;
+        posY = 0;
         width = textureRegion.getRegionWidth();
         height = textureRegion.getRegionHeight();
         rotation = 0;
@@ -57,18 +75,20 @@ public class AthenaGame extends Game {
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             //X-Positions Wert um 1 verringern
-            posx--;
+            posX--;
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             //X-Positions Wert um 1 erhöhen
-            posx++;
+            posX++;
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             //Y-Positions Wert um 1 verringern
-            posy--;
+            posY--;
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             //Y-Positions Wert um 1 erhöhen
-            posy++;
+            posY++;
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.PLUS)) {
             //Breite und Höhe um 1 erhöhen
             width++;
@@ -78,6 +98,7 @@ public class AthenaGame extends Game {
             width--;
             height--;
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.PAGE_UP)) {
             //Drehung um 1 erhöhen (nach rechts drehen um 1°)
             rotation++;
@@ -85,6 +106,7 @@ public class AthenaGame extends Game {
             //Dehung um 1 verringern (nach links drehen um 1°)
             rotation--;
         }
+
         //#####
         //BONUS
         //#####
@@ -93,12 +115,14 @@ public class AthenaGame extends Game {
             initializeValues();
         }
 
-
+        // Render map
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
 
         //Bevor ein Bild gerendert werden kann, muss der Batch gestartet werden
         batch.begin();
-        //Rendern des Bildes an der Stelle (posx,posy) mit der Höhe (height) der Breite (width) und der Drehung (rotation)
-        batch.draw(textureRegion, posx, posy,0, 0, width, height, 1, 1, rotation);
+        //Rendern des Bildes an der Stelle (posX,posY) mit der Höhe (height) der Breite (width) und der Drehung (rotation)
+        batch.draw(textureRegion, posX, posY,0, 0, width, height, 1, 1, rotation);
         //Nachdem alles gerendet wurde, muss der Batch beendet werden.
         batch.end();
     }
