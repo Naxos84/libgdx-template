@@ -31,6 +31,8 @@ public class AthenaGame extends Game {
     int height;
     int rotation;
 
+    float speed = 10;
+
     @Override
     public void create() {
         //Diese Methode wird !!!ein einziges!!! mal zu Beginn des Spiels aufgerufen
@@ -52,6 +54,7 @@ public class AthenaGame extends Game {
 
         // Load map
         tiledMap = new TmxMapLoader().load("maps/start.tmx");
+//        tiledMap = new TmxMapLoader().load("maps/house.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         //Alle Werte einmal festlegen, damit das Bild gemalt werden kann
@@ -73,20 +76,26 @@ public class AthenaGame extends Game {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        float delta = Gdx.graphics.getDeltaTime();
+
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             //X-Positions Wert um 1 verringern
-            posX--;
+//            posX--;
+            posX-=2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             //X-Positions Wert um 1 erhöhen
-            posX++;
+//            posX++;
+            posX+=2;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             //Y-Positions Wert um 1 verringern
-            posY--;
+//            posY--;
+            posY-=2;
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             //Y-Positions Wert um 1 erhöhen
-            posY++;
+//            posY++;
+            posY+=2;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.PLUS)) {
@@ -114,6 +123,14 @@ public class AthenaGame extends Game {
             //Zurücksetzen aller Werte auf StandardWerte
             initializeValues();
         }
+
+        // cam
+
+        camera.position.set(posX, posY,  0);
+        camera.update();
+
+        batch.setProjectionMatrix(camera.combined);
+
 
         // Render map
         tiledMapRenderer.setView(camera);
