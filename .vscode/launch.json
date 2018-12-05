@@ -6,36 +6,14 @@
     "configurations": [
         {
             "type": "java",
-            "name": "CodeLens (Launch) - DesktopLauncher",
+            "name": "Debug (Launch)-DesktopLauncher<PlainAthena>",
             "request": "launch",
             "cwd": "${workspaceFolder}/assets",
+            "console": "internalConsole",
             "stopOnEntry": false,
             "mainClass": "com.example.athena.desktop.DesktopLauncher",
             "args": "",
             "projectName": "PlainAthena"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
-            "stopOnEntry": false,
-            "mainClass": "com.example.athena.desktop.DesktopLauncher",
-            "args": "",
-            "preLaunchTask": "Compile project"
-        },
-        {
-            "type": "java",
-            "name": "Debug (Launch)-Main<VSCode>",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
-            "stopOnEntry": false,
-            "mainClass": "com.example.athena.desktop.DesktopLauncher",
-            "args": "",
-            "preLaunchTask": "Compile project",
-            "projectName": "VSCode"
         }
     ]
 }
