@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -14,6 +15,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class AthenaGame extends Game {
+
+    private static final int CHARACTER_WIDTH = 16;
+    private static final int CHARACTER_HEIGHT = 16;
 
     //Kamera zum Anzeigen der Elemente
     private OrthographicCamera camera;
@@ -40,8 +44,8 @@ public class AthenaGame extends Game {
         //Erstellen der Kamera
         camera = new OrthographicCamera();
 
-        //Setzen des Anzeigebereichs der Kamera
-        camera.setToOrtho(false, 320, 240);
+        //Setzen des Anzeigebereichs der Kamera width & height müssen ein ganzzahliges vielfaches von der window size sein!!!
+        camera.setToOrtho(false, 400, 300);
 
         //Erstellen des Batches
         batch = new SpriteBatch();
@@ -50,11 +54,10 @@ public class AthenaGame extends Game {
         batch.setProjectionMatrix(camera.combined);
 
         //Erstellen der TextureRegion(Bild) mit "characters.png"
-        textureRegion = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 0, 0, 16, 16);
+        textureRegion = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 0, 0, CHARACTER_WIDTH, CHARACTER_HEIGHT);
 
-        // Load map
+        // Lade die "start" map
         tiledMap = new TmxMapLoader().load("maps/start.tmx");
-//        tiledMap = new TmxMapLoader().load("maps/house.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         //Alle Werte einmal festlegen, damit das Bild gemalt werden kann
@@ -76,26 +79,20 @@ public class AthenaGame extends Game {
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float delta = Gdx.graphics.getDeltaTime();
-
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             //X-Positions Wert um 1 verringern
-//            posX--;
-            posX-=2;
+            posX-=1;
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             //X-Positions Wert um 1 erhöhen
-//            posX++;
-            posX+=2;
+            posX+=1;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             //Y-Positions Wert um 1 verringern
-//            posY--;
-            posY-=2;
+            posY-=1;
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             //Y-Positions Wert um 1 erhöhen
-//            posY++;
-            posY+=2;
+            posY+=1;
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.PLUS)) {
@@ -124,8 +121,7 @@ public class AthenaGame extends Game {
             initializeValues();
         }
 
-        // cam
-
+        // Kamera Position updaten, damit die Kamera immer über dem Spieler ist
         camera.position.set(posX, posY,  0);
         camera.update();
 
