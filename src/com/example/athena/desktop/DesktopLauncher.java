@@ -7,15 +7,16 @@ import com.example.athena.AthenaGame;
 public class DesktopLauncher {
     public static void main(final String[] arg) {
 
-        //Erstellen einer Konfiguration
+        // Create configuration
         final LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-        //Setzen der Breite für die Konfiguration
+        // Set config width
         config.width = 800;
-        //Setzen der Höhe für die Konfiguration
+
+        // Set config height
         config.height = 600;
 
-        //Erstellen einer Applikation mit unserem Spiel und der erstellten Konfiguration
+        // Create a application with AthenaGame and the config
         new LwjglApplication(new AthenaGame(), config);
     }
 }
