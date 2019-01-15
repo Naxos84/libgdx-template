@@ -86,7 +86,6 @@ public class AthenaGame extends Game {
             walkTimer = 0.15f;
             canWalk = true;
         }
-        Gdx.app.log("", "Walktimer: " + walkTimer);
 
 
         // Clear background with background color
