@@ -39,6 +39,11 @@ public class AthenaGame extends Game {
     int width;
     int height;
 
+    //seconds per step
+    private static final float WALKSPEED = 0.15f;
+    float walkTimer = 0;
+    boolean canWalk = false;
+
     @Override
     public void create() {
 
@@ -76,20 +81,40 @@ public class AthenaGame extends Game {
     @Override
     public void render() {
 
+        walkTimer -= Gdx.graphics.getDeltaTime();
+        if (walkTimer < 0) {
+            walkTimer = 0.15f;
+            canWalk = true;
+        }
+        Gdx.app.log("", "Walktimer: " + walkTimer);
+
+
         // Clear background with background color
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            x -= 2;
+            if (canWalk) {
+                x -= 16;
+                canWalk = false;
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            x += 2;
+            if (canWalk) {
+                x += 16;
+                canWalk = false;
+            }
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            y -= 2;
+            if (canWalk) {
+                y -= 16;
+                canWalk = false;
+            }
         } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            y += 2;
+            if (canWalk) {
+                y += 16;
+                canWalk = false;
+            }
         }
 
         // Set camera position to player an update camera
