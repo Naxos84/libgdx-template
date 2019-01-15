@@ -15,6 +15,7 @@ public class DesktopLauncher {
 
         // Set config height
         config.height = 600;
+        config.forceExit = false;
 
         // Create a application with AthenaGame and the config
         new LwjglApplication(new AthenaGame(), config);
