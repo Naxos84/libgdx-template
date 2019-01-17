@@ -39,8 +39,8 @@ public class AthenaGame extends Game {
     int width;
     int height;
 
-    //seconds per step
-    private static final float WALKSPEED = 0.15f;
+    //grid-cells per second
+    private static final float WALKSPEED = 2;
     float walkTimer = 0;
     boolean canWalk = false;
 
@@ -83,7 +83,7 @@ public class AthenaGame extends Game {
 
         walkTimer -= Gdx.graphics.getDeltaTime();
         if (walkTimer < 0) {
-            walkTimer = 0.15f;
+            walkTimer = 1 / WALKSPEED;
             canWalk = true;
         }
 
