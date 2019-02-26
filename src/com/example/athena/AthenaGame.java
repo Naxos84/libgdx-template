@@ -21,7 +21,10 @@ public class AthenaGame extends Game {
 
     private static final float WALK_SPEED = 8;
 
+    private static final String OVER_LAYER = "Over";
     private static final String COLLISION_LAYER = "Collision";
+
+    private int indexOfOverLayer;
 
     // Camera for scene
     private OrthographicCamera camera;
@@ -83,10 +86,13 @@ public class AthenaGame extends Game {
         // Load start map and init render
         tiledMap = new TmxMapLoader().load("maps/start.tmx");
 
+        indexOfOverLayer = tiledMap.getLayers().getIndex(OVER_LAYER);
+
         TiledMapTileLayer collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get(COLLISION_LAYER);
         collisionLayer.setVisible(false);
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
 
         // Set initial values
         initializeValues();
@@ -182,6 +188,8 @@ public class AthenaGame extends Game {
         batch.setProjectionMatrix(camera.combined);
 
         // Render map
+        tiledMap.getLayers().get(indexOfOverLayer).setVisible(false);
+
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
@@ -208,6 +216,10 @@ public class AthenaGame extends Game {
         }
 
         batch.end();
+
+        // Render over layer
+        tiledMap.getLayers().get(indexOfOverLayer).setVisible(true);
+        tiledMapRenderer.render(new int[]{indexOfOverLayer});
     }
 
     @Override
