@@ -2,7 +2,7 @@ package com.example.athena;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -17,12 +18,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 public class AthenaGame extends Game {
 
-    private static final int GRID_WIDTH = 16;
-    private static final int GRID_HEIGHT = 16;
+    static final int GRID_WIDTH = 16;
+    static final int GRID_HEIGHT = 16;
 
     private static final float WALK_SPEED = 8;
 
@@ -51,16 +53,13 @@ public class AthenaGame extends Game {
     TiledMapRenderer tiledMapRenderer;
 
     // Variables for position, sizes and speed
-    int x;
-    int y;
-    int width;
-    int height;
+
 
     //grid-cells per second
-    float walkTimer = 0;
-    boolean canWalk = false;
 
-    Direction currentDirection;
+    Player player;
+    PlayerController playerController;
+    DialogStage dialogStage;
 
     enum Direction {
         Up,
@@ -93,18 +92,27 @@ public class AthenaGame extends Game {
 
         // Set initial values
         initializeValues();
+        playerController = new PlayerController(this);
+
+        dialogStage = new DialogStage(new Skin(Gdx.files.internal("skin/star-soldier/star-soldier-ui.json")));
+
+        InputMultiplexer inputs = new InputMultiplexer();
+        inputs.addProcessor(dialogStage);
+        inputs.addProcessor(playerController);
+
+        Gdx.input.setInputProcessor(inputs);
     }
 
     // Init values
     private void initializeValues() {
 
-        x = 0;
-        y = 12 * GRID_HEIGHT;
+        player = new Player();
+        player.x = 50 * GRID_WIDTH;
+        player.y = 50 * GRID_HEIGHT;
 
-        width = textureRegion.getRegionWidth();
-        height = textureRegion.getRegionHeight();
+        player.width = textureRegion.getRegionWidth();
+        player.height = textureRegion.getRegionHeight();
 
-        currentDirection = Direction.Down;
     }
 
     public boolean isBlocked(int x, int y) {
@@ -189,7 +197,7 @@ public class AthenaGame extends Game {
             }
         }
 
-        Rectangle playerRect = new Rectangle(x / GRID_WIDTH, y / GRID_HEIGHT, 1, 1);
+        Rectangle playerRect = new Rectangle(player.x / GRID_WIDTH, player.y / GRID_HEIGHT, 1, 1);
 //        Gdx.app.debug("playerRect", player.getX() + ":" + player.getY() + " - " + player.getWidth() + ":" + player.getHeight());
         for (Warp warp : warps) {
 
@@ -203,8 +211,8 @@ public class AthenaGame extends Game {
                 int dest_x = warp.destX;
                 int dest_y = mapHeight - warp.destY - 1;
 
-                x = dest_x * GRID_WIDTH;
-                y = dest_y * GRID_HEIGHT;
+                player.x = dest_x * GRID_WIDTH;
+                player.y = dest_y * GRID_HEIGHT;
             }
         }
     }
@@ -213,63 +221,16 @@ public class AthenaGame extends Game {
     @Override
     public void render() {
 
-        walkTimer -= Gdx.graphics.getDeltaTime();
-        if (walkTimer < 0) {
-            walkTimer = 1 / WALK_SPEED;
-            canWalk = true;
-        }
-
         // Clear background with background color
         Gdx.gl.glClearColor(0, 0, 0.2f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Walking
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            currentDirection = Direction.Left;
-
-            if (canWalk) {
-                if (!isBlocked(x - GRID_WIDTH, y)) {
-                    x -= GRID_WIDTH;
-                    canWalk = false;
-                }
-            }
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            currentDirection = Direction.Right;
-
-            if (canWalk) {
-
-                if (!isBlocked(x + GRID_WIDTH, y)) {
-                    x += GRID_WIDTH;
-                    canWalk = false;
-                }
-            }
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            currentDirection = Direction.Down;
-
-            if (canWalk) {
-
-                if (!isBlocked(x, y - GRID_HEIGHT)) {
-                    y -= GRID_HEIGHT;
-                    canWalk = false;
-                }
-            }
-        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            currentDirection = Direction.Up;
-
-            if (canWalk) {
-
-                if (!isBlocked(x, y + GRID_HEIGHT)) {
-                    y += GRID_HEIGHT;
-                    canWalk = false;
-                }
-            }
-        }
-
+        dialogStage.act(Gdx.graphics.getDeltaTime());
         // Check warps
         checkWarps();
 
         // Set camera position to player an update camera
-        camera.position.set(x, y, 0);
+        camera.position.set(player.x, player.y, 0);
         camera.update();
 
         // Set projection matrix from camera to batch
@@ -284,21 +245,21 @@ public class AthenaGame extends Game {
         // Render sprite batch with character
         batch.begin();
 
-        switch (currentDirection) {
+        switch (player.currentDirection) {
             case Up: {
-                batch.draw(textureRegionUp, x, y, width, height);
+                batch.draw(textureRegionUp, player.x, player.y, player.width, player.height);
                 break;
             }
             case Down: {
-                batch.draw(textureRegionDown, x, y, width, height);
+                batch.draw(textureRegionDown, player.x, player.y, player.width, player.height);
                 break;
             }
             case Left: {
-                batch.draw(textureRegionLeft, x, y, width, height);
+                batch.draw(textureRegionLeft, player.x, player.y, player.width, player.height);
                 break;
             }
             case Right: {
-                batch.draw(textureRegionRight, x, y, width, height);
+                batch.draw(textureRegionRight, player.x, player.y, player.width, player.height);
                 break;
             }
         }
@@ -308,6 +269,39 @@ public class AthenaGame extends Game {
         // Render over layer
         tiledMap.getLayers().get(indexOfOverLayer).setVisible(true);
         tiledMapRenderer.render(new int[]{indexOfOverLayer});
+
+
+        playerController.update(Gdx.graphics.getDeltaTime());
+        dialogStage.draw();
+    }
+    public boolean hasDialog(final int x, final int y) {
+        MapLayer objectLayer = tiledMap.getLayers().get("Signs");
+        Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
+        Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
+        for (RectangleMapObject sign : signs) {
+            return Intersector.overlaps(sign.getRectangle(), playerRect);
+        }
+        return false;
+    }
+
+    public String[] getDialogText(final int x, final int y) {
+        MapLayer objectLayer = tiledMap.getLayers().get("Signs");
+        Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
+        Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
+
+        for (RectangleMapObject sign : signs) {
+            if (Intersector.overlaps(sign.getRectangle(), playerRect)) {
+                return sign.getProperties().get("text", String.class).split("#");
+            }
+
+        }
+        //leeres Array zurück geben damit keine NPE
+        return new String[0];
+    }
+
+    void showDialog(String[] dialogTexts) {
+        dialogStage.setTexts(dialogTexts);
+        dialogStage.show();
     }
 
     @Override
@@ -318,5 +312,11 @@ public class AthenaGame extends Game {
         textureRegionLeft.getTexture().dispose();
         textureRegionRight.getTexture().dispose();
         batch.dispose();
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
+        super.resize(width, height);
+        dialogStage.resize(width, height);
     }
 }
