@@ -20,6 +20,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.example.athena.data.Player;
+import com.example.athena.data.Warp;
 
 public class AthenaGame extends Game {
 
@@ -61,12 +63,6 @@ public class AthenaGame extends Game {
     PlayerController playerController;
     DialogStage dialogStage;
 
-    enum Direction {
-        Up,
-        Down,
-        Left,
-        Right
-    }
 
     @Override
     public void create() {
@@ -129,25 +125,6 @@ public class AthenaGame extends Game {
         return cell != null;
     }
 
-    private class Warp {
-
-        private Rectangle warpZone;
-
-        private String map;
-
-        private Integer destX;
-        private Integer destY;
-
-        Warp(float x, float y, float width, float height, String map, Integer destX, Integer destY) {
-
-            this.warpZone = new Rectangle(x, y, width, height);
-
-            this.map = map;
-            this.destX = destX;
-            this.destY = destY;
-        }
-    }
-
     private void loadMap(String filename) {
 
         if (tiledMap != null) {
@@ -201,15 +178,15 @@ public class AthenaGame extends Game {
 //        Gdx.app.debug("playerRect", player.getX() + ":" + player.getY() + " - " + player.getWidth() + ":" + player.getHeight());
         for (Warp warp : warps) {
 
-            if (Intersector.overlaps(playerRect, warp.warpZone)) {
+            if (Intersector.overlaps(playerRect, warp.getWarpZone())) {
 
-                loadMap("maps/" + warp.map + ".tmx");
+                loadMap("maps/" + warp.getMap() + ".tmx");
 
                 Integer mapWidth = tiledMap.getProperties().get("width", Integer.class);
                 Integer mapHeight = tiledMap.getProperties().get("height", Integer.class);
 
-                int dest_x = warp.destX;
-                int dest_y = mapHeight - warp.destY - 1;
+                int dest_x = warp.getDestX();
+                int dest_y = mapHeight - warp.getDestY() - 1;
 
                 player.x = dest_x * GRID_WIDTH;
                 player.y = dest_y * GRID_HEIGHT;
