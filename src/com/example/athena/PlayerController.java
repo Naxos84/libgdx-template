@@ -3,6 +3,7 @@ package com.example.athena;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.example.athena.data.Direction;
 
 public class PlayerController implements InputProcessor {
 
@@ -75,17 +76,17 @@ public class PlayerController implements InputProcessor {
     @Override
     public boolean keyDown(final int keycode) {
         if (keycode == Input.Keys.LEFT) {
-            game.player.currentDirection = AthenaGame.Direction.Left;
+            game.player.currentDirection = Direction.Left;
 
 
         } else if (keycode == Input.Keys.RIGHT) {
-            game.player.currentDirection = AthenaGame.Direction.Right;
+            game.player.currentDirection = Direction.Right;
 
         }else if (keycode == Input.Keys.DOWN) {
-            game.player.currentDirection = AthenaGame.Direction.Down;
+            game.player.currentDirection = Direction.Down;
 
         }else if (keycode == Input.Keys.UP) {
-            game.player.currentDirection = AthenaGame.Direction.Up;
+            game.player.currentDirection = Direction.Up;
 
         }
         return false;
