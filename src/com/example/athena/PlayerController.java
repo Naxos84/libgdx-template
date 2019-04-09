@@ -7,8 +7,8 @@ import com.example.athena.data.Direction;
 
 public class PlayerController implements InputProcessor {
 
-    AthenaGame game;
-    private float cooldown = 0;
+    private AthenaGame game;
+    private float coolDown = 0;
 
     PlayerController(AthenaGame game) {
         this.game = game;
@@ -19,56 +19,56 @@ public class PlayerController implements InputProcessor {
     }
 
     public void update(final float deltaTime) {
-            cooldown -= deltaTime;
+            coolDown -= deltaTime;
         boolean isPlayerMoving = isKeyPressed(Input.Keys.UP)
                 || isKeyPressed(Input.Keys.RIGHT)
                 || isKeyPressed(Input.Keys.DOWN)
                 || isKeyPressed(Input.Keys.LEFT);
 
-            if (cooldown < 0 && isPlayerMoving) {
+            if (coolDown < 0 && isPlayerMoving) {
 
-                cooldown = 0;
+                coolDown = 0;
 
                 switch(game.player.currentDirection) {
-                    case Left:
+                    case LEFT:
                         moveLeft();
                         break;
-                    case Right:
+                    case RIGHT:
                         moveRight();
                         break;
-                    case Up:
+                    case UP:
                         moveUp();
                         break;
-                    case Down:
+                    case DOWN:
                         moveDown();
                         break;
                 }
 
-                cooldown += 0.15;
+                coolDown += 0.15;
             }
     }
 
-    void moveLeft() {
-        if (!game.isBlocked(game.player.x - game.GRID_WIDTH, game.player.y)) {
-            game.player.x -= game.GRID_WIDTH;
+    private void moveLeft() {
+        if (game.isNotBlocked(game.player.x - AthenaGame.GRID_WIDTH, game.player.y)) {
+            game.player.x -= AthenaGame.GRID_WIDTH;
         }
     }
 
-    void moveRight() {
-        if (!game.isBlocked(game.player.x + game.GRID_WIDTH, game.player.y)) {
-            game.player.x += game.GRID_WIDTH;
+    private void moveRight() {
+        if (game.isNotBlocked(game.player.x + AthenaGame.GRID_WIDTH, game.player.y)) {
+            game.player.x += AthenaGame.GRID_WIDTH;
         }
     }
 
-    void moveUp() {
-        if (!game.isBlocked(game.player.x, game.player.y + game.GRID_HEIGHT)) {
-            game.player.y += game.GRID_HEIGHT;
+    private void moveUp() {
+        if (game.isNotBlocked(game.player.x, game.player.y + AthenaGame.GRID_HEIGHT)) {
+            game.player.y += AthenaGame.GRID_HEIGHT;
         }
     }
 
-    void moveDown() {
-        if (!game.isBlocked(game.player.x, game.player.y - game.GRID_HEIGHT)) {
-            game.player.y -= game.GRID_HEIGHT;
+    private void moveDown() {
+        if (game.isNotBlocked(game.player.x, game.player.y - AthenaGame.GRID_HEIGHT)) {
+            game.player.y -= AthenaGame.GRID_HEIGHT;
         }
     }
 
@@ -76,17 +76,17 @@ public class PlayerController implements InputProcessor {
     @Override
     public boolean keyDown(final int keycode) {
         if (keycode == Input.Keys.LEFT) {
-            game.player.currentDirection = Direction.Left;
+            game.player.currentDirection = Direction.LEFT;
 
 
         } else if (keycode == Input.Keys.RIGHT) {
-            game.player.currentDirection = Direction.Right;
+            game.player.currentDirection = Direction.RIGHT;
 
         }else if (keycode == Input.Keys.DOWN) {
-            game.player.currentDirection = Direction.Down;
+            game.player.currentDirection = Direction.DOWN;
 
         }else if (keycode == Input.Keys.UP) {
-            game.player.currentDirection = Direction.Up;
+            game.player.currentDirection = Direction.UP;
 
         }
         return false;
@@ -94,11 +94,9 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean keyUp(final int keycode) {
-        if (keycode == Input.Keys.ENTER) {
-            if (game.hasDialog(game.player.x, game.player.y)) {
-                String[] dialogText = game.getDialogText(game.player.x, game.player.y);
-                game.showDialog(dialogText);
-            }
+        if (keycode == Input.Keys.ENTER && game.hasDialog(game.player.x, game.player.y)) {
+            String[] dialogText = game.getDialogText(game.player.x, game.player.y);
+            game.showDialog(dialogText);
         }
         return false;
     }

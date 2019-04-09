@@ -2,7 +2,6 @@ package com.example.athena.data;
 
 public class Player {
 
-
     public Direction currentDirection;
 
     public int x;
@@ -11,6 +10,6 @@ public class Player {
     public int height;
 
     public Player() {
-        currentDirection = Direction.Down;
+        currentDirection = Direction.DOWN;
     }
 }

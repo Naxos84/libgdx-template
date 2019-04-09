@@ -27,8 +27,10 @@ public class AthenaGame extends Game {
 
     static final int GRID_WIDTH = 16;
     static final int GRID_HEIGHT = 16;
-
-    private static final float WALK_SPEED = 8;
+    private static final int VIEWPORT_WIDTH = 400;
+    private static final int VIEWPORT_HEIGHT = 300;
+    private static final int PLAYER_INITIAL_X = 50;
+    private static final int PLAYER_INITIAL_Y = 50;
 
     private static final String OVER_LAYER = "Over";
     private static final String COLLISION_LAYER = "Collision";
@@ -49,19 +51,18 @@ public class AthenaGame extends Game {
     private TextureRegion textureRegionRight;
 
     // Tiled map for store the map data in memory
-    TiledMap tiledMap;
+    private TiledMap tiledMap;
 
     // Renderer which renders a map to screen
-    TiledMapRenderer tiledMapRenderer;
+    private TiledMapRenderer tiledMapRenderer;
 
-    // Variables for position, sizes and speed
-
+    private static final String CHARACTER_ASSET_PATH = "sprites/characters.png";
 
     //grid-cells per second
 
     Player player;
-    PlayerController playerController;
-    DialogStage dialogStage;
+    private PlayerController playerController;
+    private DialogStage dialogStage;
 
 
     @Override
@@ -71,17 +72,17 @@ public class AthenaGame extends Game {
         camera = new OrthographicCamera();
 
         // Create view port for camera
-        camera.setToOrtho(false, 400, 300);
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
         // Create sprite batch
         batch = new SpriteBatch();
 
         // Create texture region from image characters.png
-        textureRegion = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 0, 0, GRID_WIDTH, GRID_HEIGHT);
-        textureRegionUp = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 16, 48, GRID_WIDTH, GRID_HEIGHT);
-        textureRegionDown = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 16, 0, GRID_WIDTH, GRID_HEIGHT);
-        textureRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 16, 16, GRID_WIDTH, GRID_HEIGHT);
-        textureRegionRight = new TextureRegion(new Texture(Gdx.files.internal("sprites/characters.png")), 16, 32, GRID_WIDTH, GRID_HEIGHT);
+        textureRegion = new TextureRegion(new Texture(Gdx.files.internal(CHARACTER_ASSET_PATH)), 0, 0, GRID_WIDTH, GRID_HEIGHT);
+        textureRegionUp = new TextureRegion(new Texture(Gdx.files.internal(CHARACTER_ASSET_PATH)), 16, 48, GRID_WIDTH, GRID_HEIGHT);
+        textureRegionDown = new TextureRegion(new Texture(Gdx.files.internal(CHARACTER_ASSET_PATH)), 16, 0, GRID_WIDTH, GRID_HEIGHT);
+        textureRegionLeft = new TextureRegion(new Texture(Gdx.files.internal(CHARACTER_ASSET_PATH)), 16, 16, GRID_WIDTH, GRID_HEIGHT);
+        textureRegionRight = new TextureRegion(new Texture(Gdx.files.internal(CHARACTER_ASSET_PATH)), 16, 32, GRID_WIDTH, GRID_HEIGHT);
 
         // Load start map and init render
         loadMap("maps/start.tmx");
@@ -103,15 +104,15 @@ public class AthenaGame extends Game {
     private void initializeValues() {
 
         player = new Player();
-        player.x = 50 * GRID_WIDTH;
-        player.y = 50 * GRID_HEIGHT;
+        player.x = PLAYER_INITIAL_X * GRID_WIDTH;
+        player.y = PLAYER_INITIAL_Y * GRID_HEIGHT;
 
         player.width = textureRegion.getRegionWidth();
         player.height = textureRegion.getRegionHeight();
 
     }
 
-    public boolean isBlocked(int x, int y) {
+    boolean isNotBlocked(int x, int y) {
 
         // Convert player pixel coordinates to grid coordinates
         x = x / GRID_WIDTH;
@@ -122,7 +123,7 @@ public class AthenaGame extends Game {
         TiledMapTileLayer.Cell cell = collisionLayer.getCell(x, y);
 
         // Return true if cell is blocked
-        return cell != null;
+        return cell == null;
     }
 
     private void loadMap(String filename) {
@@ -154,42 +155,40 @@ public class AthenaGame extends Game {
 
                 String type = mapObject.getProperties().get("type", String.class);
 
-                if (type.equals("WARP")) {
+                if ("WARP".equals(type)) {
                     String map = mapObject.getProperties().get("DEST_MAP", String.class);
                     Float posX = mapObject.getProperties().get("x", Float.class);
                     Float posY = mapObject.getProperties().get("y", Float.class);
                     Float width = mapObject.getProperties().get("width", Float.class);
                     Float height = mapObject.getProperties().get("height", Float.class);
-                    Integer dest_x = mapObject.getProperties().get("DEST_X", Integer.class);
-                    Integer dest_y = mapObject.getProperties().get("DEST_Y", Integer.class);
+                    Integer destX = mapObject.getProperties().get("DEST_X", Integer.class);
+                    Integer destY = mapObject.getProperties().get("DEST_Y", Integer.class);
 
                     warps.add(new Warp(posX / GRID_WIDTH,
                             posY / GRID_HEIGHT,
                             width / GRID_WIDTH,
                             height / GRID_HEIGHT,
                             map,
-                            dest_x,
-                            dest_y));
+                            destX,
+                            destY));
                 }
             }
         }
 
         Rectangle playerRect = new Rectangle(player.x / GRID_WIDTH, player.y / GRID_HEIGHT, 1, 1);
-//        Gdx.app.debug("playerRect", player.getX() + ":" + player.getY() + " - " + player.getWidth() + ":" + player.getHeight());
         for (Warp warp : warps) {
 
             if (Intersector.overlaps(playerRect, warp.getWarpZone())) {
 
                 loadMap("maps/" + warp.getMap() + ".tmx");
 
-                Integer mapWidth = tiledMap.getProperties().get("width", Integer.class);
                 Integer mapHeight = tiledMap.getProperties().get("height", Integer.class);
 
-                int dest_x = warp.getDestX();
-                int dest_y = mapHeight - warp.getDestY() - 1;
+                int warpDestX = warp.getDestX();
+                int warpDestY = mapHeight - warp.getDestY() - 1;
 
-                player.x = dest_x * GRID_WIDTH;
-                player.y = dest_y * GRID_HEIGHT;
+                player.x = warpDestX * GRID_WIDTH;
+                player.y = warpDestY * GRID_HEIGHT;
             }
         }
     }
@@ -199,7 +198,7 @@ public class AthenaGame extends Game {
     public void render() {
 
         // Clear background with background color
-        Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         dialogStage.act(Gdx.graphics.getDeltaTime());
@@ -223,19 +222,19 @@ public class AthenaGame extends Game {
         batch.begin();
 
         switch (player.currentDirection) {
-            case Up: {
+            case UP: {
                 batch.draw(textureRegionUp, player.x, player.y, player.width, player.height);
                 break;
             }
-            case Down: {
+            case DOWN: {
                 batch.draw(textureRegionDown, player.x, player.y, player.width, player.height);
                 break;
             }
-            case Left: {
+            case LEFT: {
                 batch.draw(textureRegionLeft, player.x, player.y, player.width, player.height);
                 break;
             }
-            case Right: {
+            case RIGHT: {
                 batch.draw(textureRegionRight, player.x, player.y, player.width, player.height);
                 break;
             }
@@ -251,17 +250,20 @@ public class AthenaGame extends Game {
         playerController.update(Gdx.graphics.getDeltaTime());
         dialogStage.draw();
     }
-    public boolean hasDialog(final int x, final int y) {
+
+    boolean hasDialog(final int x, final int y) {
         MapLayer objectLayer = tiledMap.getLayers().get("Signs");
         Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
         Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
         for (RectangleMapObject sign : signs) {
-            return Intersector.overlaps(sign.getRectangle(), playerRect);
+            if (Intersector.overlaps(sign.getRectangle(), playerRect)) {
+                return true;
+            }
         }
         return false;
     }
 
-    public String[] getDialogText(final int x, final int y) {
+    String[] getDialogText(final int x, final int y) {
         MapLayer objectLayer = tiledMap.getLayers().get("Signs");
         Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
         Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
