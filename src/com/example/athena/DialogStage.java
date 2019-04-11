@@ -84,6 +84,11 @@ public class DialogStage extends Stage {
         return true;
     }
 
+    @Override
+    public boolean keyDown(final int keyCode) {
+        return isVisible;
+    }
+
     private void next() {
         area.clear();
         area.setText(texts.first());
