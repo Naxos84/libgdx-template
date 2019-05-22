@@ -3,6 +3,7 @@ package com.example.athena.controller;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -13,21 +14,19 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.example.athena.AthenaGame;
 import com.example.athena.data.Player;
+import com.example.athena.data.Sign;
 import com.example.athena.data.Warp;
 
 public class MapController {
 
-    //TODO this field is public due to the still missing hasDialog() and getDialogText() methods.
     public TiledMap tiledMap;
 
-    //TODO still public cause not finished in course
-    public TiledMapRenderer tiledMapRenderer;
+    private TiledMapRenderer tiledMapRenderer;
 
     private static final String OVER_LAYER = "Over";
     private static final String COLLISION_LAYER = "Collision";
 
-    //TODO still public cause not finished in course
-    public int indexOfOverLayer;
+    private int indexOfOverLayer;
     private Player player;
 
     public MapController(final Player player) {
@@ -135,4 +134,34 @@ public class MapController {
         tiledMap.getLayers().get(indexOfOverLayer).setVisible(true);
         tiledMapRenderer.render(new int[]{indexOfOverLayer});
     }
+
+    public Sign hasDialog(final int x, final int y) {
+        MapLayer objectLayer = tiledMap.getLayers().get("Signs");
+        if (objectLayer != null) {
+            Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
+            Rectangle playerRect = new Rectangle(x, y, AthenaGame.GRID_WIDTH, AthenaGame.GRID_HEIGHT);
+            for (RectangleMapObject sign : signs) {
+                Rectangle signRect = sign.getRectangle();
+                if (Intersector.overlaps(signRect, playerRect)) {
+                    return new Sign(signRect, sign.getProperties().get("text", String.class));
+                }
+            }
+        }
+        return null;
+    }
+
+//    public String[] getDialogText(final int x, final int y) {
+//        MapLayer objectLayer = tiledMap.getLayers().get("Signs");
+//        Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
+//        Rectangle playerRect = new Rectangle(x, y, AthenaGame.GRID_WIDTH, AthenaGame.GRID_HEIGHT);
+//
+//        for (RectangleMapObject sign : signs) {
+//            if (Intersector.overlaps(sign.getRectangle(), playerRect)) {
+//                return sign.getProperties().get("text", String.class).split("#");
+//            }
+//
+//        }
+//        //leeres Array zurück geben damit keine NPE
+//        return new String[0];
+//    }
 }

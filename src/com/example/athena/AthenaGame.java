@@ -119,10 +119,7 @@ public class AthenaGame extends Game {
         batch.setProjectionMatrix(camera.combined);
 
         // Render map
-        mapController.tiledMap.getLayers().get(mapController.indexOfOverLayer).setVisible(false);
-
-        mapController.tiledMapRenderer.setView(camera);
-        mapController.tiledMapRenderer.render();
+        mapController.renderBackground(camera);
 
         // Render sprite batch with character
         batch.begin();
@@ -145,42 +142,14 @@ public class AthenaGame extends Game {
         batch.end();
 
         // Render over layer
-        mapController.tiledMap.getLayers().get(mapController.indexOfOverLayer).setVisible(true);
-        mapController.tiledMapRenderer.render(new int[]{mapController.indexOfOverLayer});
+        mapController.renderOverLayer();
 
 
         playerController.update(Gdx.graphics.getDeltaTime());
         dialogStage.draw();
     }
 
-    //TODO move this to MapController
-    public boolean hasDialog(final int x, final int y) {
-        MapLayer objectLayer = mapController.tiledMap.getLayers().get("Signs");
-        Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
-        Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
-        for (RectangleMapObject sign : signs) {
-            if (Intersector.overlaps(sign.getRectangle(), playerRect)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    //TODO move this to MapController
-    public String[] getDialogText(final int x, final int y) {
-        MapLayer objectLayer = mapController.tiledMap.getLayers().get("Signs");
-        Array<RectangleMapObject> signs = objectLayer.getObjects().getByType(RectangleMapObject.class);
-        Rectangle playerRect = new Rectangle(x, y, GRID_WIDTH, GRID_HEIGHT);
-
-        for (RectangleMapObject sign : signs) {
-            if (Intersector.overlaps(sign.getRectangle(), playerRect)) {
-                return sign.getProperties().get("text", String.class).split("#");
-            }
-
-        }
-        //leeres Array zurück geben damit keine NPE
-        return new String[0];
-    }
 
     public void showDialog(String[] dialogTexts) {
         dialogStage.setTexts(dialogTexts);

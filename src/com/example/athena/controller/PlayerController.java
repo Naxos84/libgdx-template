@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.example.athena.AthenaGame;
 import com.example.athena.data.Direction;
 import com.example.athena.data.Player;
+import com.example.athena.data.Sign;
 
 public class PlayerController implements InputProcessor {
 
@@ -100,8 +101,9 @@ public class PlayerController implements InputProcessor {
 
     @Override
     public boolean keyUp(final int keycode) {
-        if (keycode == Input.Keys.ENTER && game.hasDialog(player.x, player.y)) {
-            String[] dialogText = game.getDialogText(player.x, player.y);
+        Sign sign = mapController.hasDialog(player.x, player.y);
+        if (keycode == Input.Keys.ENTER && sign != null) {
+            String[] dialogText = sign.getText();
             game.showDialog(dialogText);
         }
         return false;
