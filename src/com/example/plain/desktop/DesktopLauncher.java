@@ -1,8 +1,8 @@
-package com.example.athena.desktop;
+package com.example.plain.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.example.athena.AthenaGame;
+import com.example.plain.PlainGame;
 
 public class DesktopLauncher {
     public static void main(final String[] arg) {
@@ -18,6 +18,6 @@ public class DesktopLauncher {
         config.forceExit = false;
 
         // Create a application with AthenaGame and the config
-        new LwjglApplication(new AthenaGame(), config);
+        new LwjglApplication(new PlainGame(), config);
     }
 }
